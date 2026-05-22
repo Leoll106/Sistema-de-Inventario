@@ -1,8 +1,8 @@
-import type { Product, Movement } from '@/types'
+import type { Movement, ProductWithCategory } from '@/types'
 import { formatDateShort } from './utils'
 
 // ─── PDF ────────────────────────────────────────────
-export async function exportInventarioPDF(products: Product[]) {
+export async function exportInventarioPDF(products: ProductWithCategory[]) {
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF()
 
@@ -78,7 +78,7 @@ export async function exportHistorialPDF(movements: Movement[]) {
   doc.save(`historial_${new Date().toISOString().slice(0, 10)}.pdf`)
 }
 
-export async function exportAlertasPDF(products: Product[]) {
+export async function exportAlertasPDF(products: ProductWithCategory[]) {
   const alerts = products.filter((p) => p.stock <= p.min_stock)
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF()
@@ -101,7 +101,7 @@ export async function exportAlertasPDF(products: Product[]) {
 }
 
 // ─── EXCEL ──────────────────────────────────────────
-export async function exportInventarioExcel(products: Product[]) {
+export async function exportInventarioExcel(products: ProductWithCategory[]) {
   const XLSX = await import('xlsx')
   const data = [['Código', 'Nombre', 'Categoría', 'Unidad', 'Ubicación', 'Stock', 'Mínimo', 'Precio', 'Estado']]
   products.forEach((p) => {

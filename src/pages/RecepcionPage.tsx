@@ -17,7 +17,7 @@ export function RecepcionPage() {
   const [saving, setSaving] = useState(false)
   const [selectedProd, setSelectedProd] = useState<ProductWithCategory | null>(null)
 
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<RecepcionFormData>({
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<RecepcionFormData>({
     resolver: zodResolver(recepcionSchema),
     defaultValues: { product_id: '', quantity: 1, reference: '', provider: '', notes: '' },
   })

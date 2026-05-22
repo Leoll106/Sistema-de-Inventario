@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Toaster } from 'react-hot-toast'
+import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/lib/authStore'
 import { LoginPage } from '@/pages/LoginPage'
@@ -12,38 +13,68 @@ export default function App() {
   const [page, setPage] = useState<string>('dashboard')
 
   useEffect(() => {
-    // Check initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session?.user) {
-        const { data } = await supabase
+    let isMounted = true
+
+    const loadProfile = async (session: Session | null) => {
+      if (!isMounted) return
+
+      if (!session?.user) {
+        setProfile(null)
+        setLoading(false)
+        return
+      }
+
+      setLoading(true)
+
+      try {
+        const { data, error } = await supabase
           .from('profiles')
           .select('*')
           .eq('id', session.user.id)
-          .single()
-        if (data) setProfile({ ...(data as Profile), email: session.user.email })
-      }
-      setLoading(false)
-    })
+          .maybeSingle()
 
-    // Listen to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (error) {
+          console.error('Error loading user profile:', error)
+          setProfile(null)
+          return
+        }
+
+        setProfile(data ? { ...(data as Profile), email: session.user.email } : null)
+      } catch (error) {
+        console.error('Unexpected error loading user profile:', error)
+        setProfile(null)
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => loadProfile(session))
+      .catch((error) => {
+        console.error('Error getting auth session:', error)
+        if (isMounted) {
+          setProfile(null)
+          setLoading(false)
+        }
+      })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) {
         setProfile(null)
         setLoading(false)
         return
       }
-      if (session.user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single()
-        if (data) setProfile({ ...(data as Profile), email: session.user.email })
-        setLoading(false)
-      }
+
+      setTimeout(() => {
+        void loadProfile(session)
+      }, 0)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
   }, [setProfile, setLoading])
 
   if (loading) {

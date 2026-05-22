@@ -1,6 +1,6 @@
 // AlertasPage
 import { useMemo } from 'react'
-import { AlertTriangle, ArrowDownToLine } from 'lucide-react'
+import { AlertTriangle } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import { getStockStatus } from '@/lib/utils'
 import { Card, CardHeader, Badge, EmptyState, PageHeader, Spinner, StockBar } from '@/components/ui'

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileText, Download } from 'lucide-react'
+import { Download } from 'lucide-react'
 import { useProducts } from '@/hooks/useProducts'
 import { useMovements } from '@/hooks/useMovements'
 import { exportInventarioPDF, exportInventarioExcel, exportHistorialPDF, exportHistorialExcel, exportAlertasPDF } from '@/lib/exports'
