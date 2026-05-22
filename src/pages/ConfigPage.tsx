@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAuthStore } from '@/lib/authStore'
+import { getRoleLabel } from '@/lib/utils'
 import { PageHeader, Card, CardHeader, CardBody, Input, Select, Button } from '@/components/ui'
 
 export function ConfigPage() {
@@ -52,7 +53,7 @@ export function ConfigPage() {
               </div>
               <div>
                 <p className="text-xs text-slate-500 mb-0.5">Rol</p>
-                <p className="text-slate-300 capitalize">{profile?.role}</p>
+                <p className="text-slate-300">{profile ? getRoleLabel(profile.role) : '—'}</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 mb-0.5">Estado</p>

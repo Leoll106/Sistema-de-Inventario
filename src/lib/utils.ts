@@ -31,7 +31,7 @@ export const getStockStatus = (stock: number, min: number) => {
 }
 
 export const getRoleLabel = (role: string): string =>
-  ({ admin: 'Administrador', bodeguero: 'Bodeguero', viewer: 'Solo lectura' }[role] ?? role)
+  ({ admin: 'Administrador', bodeguero: 'Bodeguero', viewer: 'Visitante' }[role] ?? role)
 
 export const initials = (name: string): string =>
   name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()

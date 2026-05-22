@@ -113,8 +113,65 @@ alter table public.movements  enable row level security;
 -- Helper function: obtener rol del usuario actual
 create or replace function public.get_user_role()
 returns text language sql security definer stable as $$
-  select role from public.profiles where id = auth.uid();
+  select role from public.profiles where id = auth.uid() and active = true;
 $$;
+
+create or replace function public.validate_safe_text(
+  p_value text,
+  p_field text,
+  p_max_length integer
+) returns text language plpgsql immutable as $$
+declare
+  v_value text;
+begin
+  v_value := btrim(coalesce(p_value, ''));
+
+  if v_value = '' then
+    raise exception '% es requerido', p_field;
+  end if;
+
+  if char_length(v_value) > p_max_length then
+    raise exception '% supera el maximo de % caracteres', p_field, p_max_length;
+  end if;
+
+  if v_value ~ '[<>{}`]' or v_value ~ '[[:cntrl:]]' then
+    raise exception '% contiene caracteres no permitidos', p_field;
+  end if;
+
+  return v_value;
+end;
+$$;
+
+create or replace function public.prevent_profile_privilege_change_by_non_admin()
+returns trigger language plpgsql security definer as $$
+begin
+  if (old.active is distinct from new.active or old.role is distinct from new.role)
+     and coalesce(public.get_user_role(), '') <> 'admin' then
+    raise exception 'Solo administradores pueden cambiar estado o rol de usuarios';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger profiles_privilege_admin_only
+  before update of active, role on public.profiles
+  for each row execute procedure public.prevent_profile_privilege_change_by_non_admin();
+
+create or replace function public.prevent_product_active_change_by_non_admin()
+returns trigger language plpgsql security definer as $$
+begin
+  if old.active is distinct from new.active and coalesce(public.get_user_role(), '') <> 'admin' then
+    raise exception 'Solo administradores pueden activar o desactivar productos';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger products_active_admin_only
+  before update of active on public.products
+  for each row execute procedure public.prevent_product_active_change_by_non_admin();
 
 -- PROFILES: cada usuario ve su propio perfil; admins ven todos
 create policy "profiles_select_own" on public.profiles
@@ -135,7 +192,7 @@ create policy "categories_manage_admin" on public.categories
 
 -- PRODUCTS: todos los usuarios autenticados leen; bodeguero/admin escriben
 create policy "products_select_authenticated" on public.products
-  for select using (auth.uid() is not null);
+  for select using (public.get_user_role() in ('admin','bodeguero','viewer'));
 
 create policy "products_insert_staff" on public.products
   for insert with check (public.get_user_role() in ('admin','bodeguero'));
@@ -148,7 +205,7 @@ create policy "products_delete_admin" on public.products
 
 -- MOVEMENTS: todos leen; bodeguero/admin insertan; nadie borra
 create policy "movements_select_authenticated" on public.movements
-  for select using (auth.uid() is not null);
+  for select using (public.get_user_role() in ('admin','bodeguero','viewer'));
 
 create policy "movements_insert_staff" on public.movements
   for insert with check (public.get_user_role() in ('admin','bodeguero'));
@@ -168,6 +225,13 @@ declare
   v_new_stock integer;
   v_user_name text;
 begin
+  if coalesce(public.get_user_role(), '') not in ('admin', 'bodeguero') then
+    raise exception 'No tienes permisos para registrar recepciones';
+  end if;
+
+  p_reference := public.validate_safe_text(p_reference, 'La referencia', 50);
+  p_notes := public.validate_safe_text(p_notes, 'Las observaciones', 320);
+
   select full_name into v_user_name from public.profiles where id = auth.uid();
 
   update public.products
@@ -192,6 +256,13 @@ declare
   v_new_stock     integer;
   v_user_name     text;
 begin
+  if coalesce(public.get_user_role(), '') not in ('admin', 'bodeguero') then
+    raise exception 'No tienes permisos para registrar despachos';
+  end if;
+
+  p_reference := public.validate_safe_text(p_reference, 'La referencia', 50);
+  p_notes := public.validate_safe_text(p_notes, 'Las observaciones', 320);
+
   select full_name into v_user_name from public.profiles where id = auth.uid();
 
   select stock into v_current_stock from public.products where id = p_product_id for update;

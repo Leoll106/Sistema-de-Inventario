@@ -134,7 +134,7 @@ export function DespachoPage() {
                     {...register('quantity', { valueAsNumber: true })}
                   />
                   <Input
-                    label="Solicitante / Área"
+                    label="Solicitante / Área *"
                     placeholder="Área o persona"
                     error={errors.requester?.message}
                     {...register('requester')}
@@ -142,14 +142,14 @@ export function DespachoPage() {
                 </div>
 
                 <Input
-                  label="Referencia / OC"
+                  label="Referencia / OC *"
                   placeholder="OC-001, proyecto..."
                   error={errors.reference?.message}
                   {...register('reference')}
                 />
 
                 <Textarea
-                  label="Observaciones"
+                  label="Observaciones *"
                   placeholder="Notas adicionales..."
                   error={errors.notes?.message}
                   {...register('notes')}

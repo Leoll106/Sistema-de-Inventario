@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Toaster } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/lib/authStore'
@@ -13,6 +13,10 @@ export default function App() {
   const [page, setPage] = useState<string>('dashboard')
 
   useEffect(() => {
+    setPage('dashboard')
+  }, [profile?.id])
+
+  useEffect(() => {
     let isMounted = true
 
     const loadProfile = async (session: Session | null) => {
@@ -20,6 +24,7 @@ export default function App() {
 
       if (!session?.user) {
         setProfile(null)
+        setPage('dashboard')
         setLoading(false)
         return
       }
@@ -36,6 +41,13 @@ export default function App() {
         if (error) {
           console.error('Error loading user profile:', error)
           setProfile(null)
+          return
+        }
+
+        if (data && !data.active) {
+          await supabase.auth.signOut()
+          setProfile(null)
+          toast.error('Tu usuario esta desactivado. Contacta a un administrador.')
           return
         }
 
@@ -62,6 +74,7 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) {
         setProfile(null)
+        setPage('dashboard')
         setLoading(false)
         return
       }

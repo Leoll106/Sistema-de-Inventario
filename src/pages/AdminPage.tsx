@@ -140,7 +140,7 @@ export function AdminPage() {
                     <td className="px-5 py-4 text-sm text-slate-400">{u.email ?? '—'}</td>
                     <td className="px-5 py-4">
                       <span className={cn('text-[10px] font-mono font-semibold uppercase tracking-wider px-2 py-1 rounded-md', roleColorMap[u.role] ?? 'bg-white/5 text-slate-400')}>
-                        {u.role}
+                        {getRoleLabel(u.role)}
                       </span>
                     </td>
                     <td className="px-5 py-4">
@@ -219,13 +219,13 @@ export function AdminPage() {
             />
           </div>
           <Select label="Rol *" error={errors.role?.message} {...register('role')}>
-            <option value="viewer">Viewer — Solo consulta</option>
+            <option value="viewer">Visitante — Solo consulta</option>
             <option value="bodeguero">Bodeguero — Recepciones y despachos</option>
             <option value="admin">Administrador — Acceso total</option>
           </Select>
           <div className="p-3 bg-surface-2 rounded-lg border border-white/8 text-xs text-slate-400 space-y-1">
             <p className="font-medium text-slate-300">Permisos por rol:</p>
-            <p>🔵 <b>Viewer</b> — Solo puede ver inventario e historial</p>
+            <p>🔵 <b>Visitante</b> — Solo puede ver inventario e historial</p>
             <p>🟢 <b>Bodeguero</b> — Puede hacer recepciones, despachos y editar productos</p>
             <p>🟣 <b>Admin</b> — Acceso completo: usuarios, eliminar productos, configuración</p>
           </div>

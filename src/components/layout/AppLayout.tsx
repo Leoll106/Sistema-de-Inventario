@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   LayoutDashboard, Package, ArrowDownToLine, ArrowUpFromLine,
   History, AlertTriangle, FileText, Users, Settings, LogOut, Bell,
@@ -77,13 +77,21 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
   const visibleItems = navItems.filter(
     (item) => !item.roles || item.roles.includes(profile.role)
   )
+  const canAccessCurrentPage = visibleItems.some((item) => item.id === currentPage)
+  const effectivePage = canAccessCurrentPage ? currentPage : 'dashboard'
+
+  useEffect(() => {
+    if (!canAccessCurrentPage) {
+      onNavigate('dashboard')
+    }
+  }, [canAccessCurrentPage, onNavigate])
 
   const handleLogout = async () => {
     await logout()
     toast.success('Sesión cerrada')
   }
 
-  const PageComponent = PAGES[currentPage] ?? DashboardPage
+  const PageComponent = PAGES[effectivePage] ?? DashboardPage
 
   return (
     <div className="min-h-screen bg-surface flex flex-col">
@@ -130,7 +138,7 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
           <div className="hidden sm:block">
             <div className="text-xs font-medium text-slate-300 leading-tight">{profile.full_name.split(' ')[0]}</div>
             <div className={cn('text-[10px] font-mono font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-sm mt-0.5 inline-block', roleColorMap[profile.role])}>
-              {profile.role}
+              {getRoleLabel(profile.role)}
             </div>
           </div>
           <button
@@ -153,7 +161,7 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
             {/* Principal group */}
             <SidebarSection label="Principal">
               {visibleItems.slice(0, 2).map((item) => (
-                <NavButton key={item.id} item={item} active={currentPage === item.id} onClick={() => onNavigate(item.id)} />
+                <NavButton key={item.id} item={item} active={effectivePage === item.id} onClick={() => onNavigate(item.id)} />
               ))}
             </SidebarSection>
 
@@ -161,14 +169,14 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
             {hasRole('admin', 'bodeguero') && (
               <SidebarSection label="Operaciones">
                 {visibleItems.filter(i => ['inventario','recepcion','despacho','historial'].includes(i.id)).map((item) => (
-                  <NavButton key={item.id} item={item} active={currentPage === item.id} onClick={() => onNavigate(item.id)} />
+                  <NavButton key={item.id} item={item} active={effectivePage === item.id} onClick={() => onNavigate(item.id)} />
                 ))}
               </SidebarSection>
             )}
             {profile.role === 'viewer' && (
               <SidebarSection label="Consulta">
                 {visibleItems.filter(i => ['inventario','historial'].includes(i.id)).map((item) => (
-                  <NavButton key={item.id} item={item} active={currentPage === item.id} onClick={() => onNavigate(item.id)} />
+                  <NavButton key={item.id} item={item} active={effectivePage === item.id} onClick={() => onNavigate(item.id)} />
                 ))}
               </SidebarSection>
             )}
@@ -176,7 +184,7 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
             {/* Analisis */}
             <SidebarSection label="Análisis">
               {visibleItems.filter(i => ['reportes'].includes(i.id)).map((item) => (
-                <NavButton key={item.id} item={item} active={currentPage === item.id} onClick={() => onNavigate(item.id)} />
+                <NavButton key={item.id} item={item} active={effectivePage === item.id} onClick={() => onNavigate(item.id)} />
               ))}
             </SidebarSection>
 
@@ -184,7 +192,7 @@ export function AppLayout({ currentPage, onNavigate }: AppLayoutProps) {
             {hasRole('admin') && (
               <SidebarSection label="Administración">
                 {visibleItems.filter(i => ['admin','config'].includes(i.id)).map((item) => (
-                  <NavButton key={item.id} item={item} active={currentPage === item.id} onClick={() => onNavigate(item.id)} />
+                  <NavButton key={item.id} item={item} active={effectivePage === item.id} onClick={() => onNavigate(item.id)} />
                 ))}
               </SidebarSection>
             )}

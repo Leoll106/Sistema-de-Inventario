@@ -119,7 +119,7 @@ export function RecepcionPage() {
                     {...register('quantity', { valueAsNumber: true })}
                   />
                   <Input
-                    label="Proveedor"
+                    label="Proveedor *"
                     placeholder="Nombre del proveedor"
                     error={errors.provider?.message}
                     {...register('provider')}
@@ -127,14 +127,14 @@ export function RecepcionPage() {
                 </div>
 
                 <Input
-                  label="N° Documento / Factura"
+                  label="N° Documento / Factura *"
                   placeholder="FAC-001, GR-002..."
                   error={errors.reference?.message}
                   {...register('reference')}
                 />
 
                 <Textarea
-                  label="Observaciones"
+                  label="Observaciones *"
                   placeholder="Notas adicionales..."
                   error={errors.notes?.message}
                   {...register('notes')}

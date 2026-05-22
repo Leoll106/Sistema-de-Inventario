@@ -9,8 +9,8 @@ import { Input, Button } from '@/components/ui'
 
 const DEMO_ACCOUNTS = [
   { label: 'Admin',      email: 'admin@stockflow.com',     password: 'Admin123',   color: 'bg-gradient-brand' },
-  { label: 'Bodeguero',  email: 'bodega@stockflow.com',    password: 'Bodega123',  color: 'bg-gradient-success' },
-  { label: 'Viewer',     email: 'viewer@stockflow.com',    password: 'Viewer123',  color: 'bg-warning/80' },
+  { label: 'Bodeguero',  email: 'bodega@stockflow.com',    password: 'NuevaB0degA1245',  color: 'bg-gradient-success' },
+  { label: 'Visitante',  email: 'viewer@stockflow.com',    password: 'NuevoV1s1tante145',  color: 'bg-warning/80' },
 ]
 
 export function LoginPage() {
