@@ -96,7 +96,7 @@ export default function App() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-10 h-10 bg-gradient-brand rounded-xl flex items-center justify-center text-xl">📦</div>
           <Spinner />
-          <p className="text-xs text-slate-500 font-mono tracking-widest uppercase">Cargando StockFlow...</p>
+          <p className="text-xs text-slate-500 font-mono tracking-widest uppercase">Cargando Inventario...</p>
         </div>
       </div>
     )

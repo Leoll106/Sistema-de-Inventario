@@ -9,7 +9,7 @@ Stack: **React 18 + TypeScript + Tailwind CSS + Supabase**
 ### 1. Instalar dependencias
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Configurar Supabase
@@ -41,11 +41,11 @@ VITE_SUPABASE_ANON_KEY=eyJhbGci...
 
 En **Supabase → Authentication → Users → Add user**, crea:
 
-| Email                       | Contraseña  | Rol        |
-|-----------------------------|-------------|------------|
-| admin@stockflow.com         | Admin123    | admin      |
-| bodega@stockflow.com        | Bodega123   | bodeguero  |
-| viewer@stockflow.com        | Viewer123   | viewer     |
+| Email                       | Contraseña          | Rol        |
+|-----------------------------|---------------------|------------|
+| admin@stockflow.com         | Admin123            | admin      |
+| bodega@stockflow.com        | NuevaB0degA1245     | bodeguero  |
+| viewer@stockflow.com        | NuevoV1s1tante145   | viewer     |
 
 > ⚠️ Después de crear cada usuario, actualiza su rol en la tabla `profiles`:
 > ```sql
@@ -56,7 +56,7 @@ En **Supabase → Authentication → Users → Add user**, crea:
 ### 4. Levantar el servidor de desarrollo
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Abre [http://localhost:5173](http://localhost:5173)
@@ -134,37 +134,3 @@ supabase/
 - **Stock mínimo**: entero >= 0
 - **Precio**: decimal >= 0
 - **Campos requeridos**: marcados con `*` y mensaje inline
-
----
-
-## 📦 Construcción para producción
-
-```bash
-npm run build
-```
-
-El resultado en `/dist` se puede desplegar en **Vercel**, **Netlify**, o cualquier hosting estático.
-
-En Vercel:
-```bash
-npx vercel
-```
-
----
-
-## 🛠️ Tecnologías
-
-| Tecnología        | Uso                          |
-|-------------------|------------------------------|
-| React 18          | UI framework                 |
-| TypeScript (strict)| Tipado estático completo    |
-| Tailwind CSS 3    | Estilos utilitarios          |
-| Supabase          | BD PostgreSQL + Auth + RLS   |
-| Zustand           | Estado global de auth        |
-| React Hook Form   | Manejo de formularios        |
-| Zod               | Validación de schemas        |
-| jsPDF             | Exportación PDF              |
-| SheetJS (xlsx)    | Exportación Excel            |
-| Lucide React      | Iconos                       |
-| react-hot-toast   | Notificaciones               |
-| Vite              | Build tool                   |

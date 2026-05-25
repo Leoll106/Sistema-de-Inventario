@@ -53,8 +53,8 @@ export function LoginPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 bg-gradient-brand rounded-2xl mb-4 shadow-lg shadow-brand/20">
             <Package className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-2xl font-semibold text-slate-100 tracking-tight">StockFlow</h1>
-          <p className="text-sm text-slate-500 mt-1 font-light">Plataforma de gestión de inventario</p>
+          <h1 className="text-2xl font-semibold text-slate-100 tracking-tight">Sistema de Inventario</h1>
+          <p className="text-sm text-slate-500 mt-1 font-light">Plataforma de Gestión Automatizado</p>
         </div>
 
         {/* Card */}
